@@ -27,6 +27,7 @@ import Database.Gestion;
 import javax.swing.JSpinner;
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
+import javax.swing.JButton;
 
 public class Registro extends JFrame {
 
@@ -91,8 +92,8 @@ public class Registro extends JFrame {
 			contentPane.add(panelRegistro, gbc_panelRegistro);
 			
 			//Layout
-			GridBagLayout gbl_panelRegistro = new GridBagLayout();
-			gbl_panelRegistro.columnWeights = new double[]{0.0, 1.0};
+			GridBagLayout gbl_panelRegistro = new GridBagLayout();			
+			gbl_panelRegistro.columnWidths = new int[]{150,310};
 			gbl_panelRegistro.rowHeights = new int[]{40, 40, 40, 40, 40, 40, 40};		
 			panelRegistro.setLayout(gbl_panelRegistro);
 			
@@ -244,15 +245,16 @@ public class Registro extends JFrame {
 				panelRegistro.add(labelRol, gbc_labelRol);				
 				
 				//Select para los roles
-				JComboBox selectRoles = makeSelectRoles(panelRegistro);				
+				JComboBox selectRoles = makeSelectAll(panelRegistro, new String[]{"ID", "Nombre"}, "Roles", "Selecciona un rol");	
+				selectRoles.setFont(new Font("Open Sans", Font.PLAIN, 13));
 				selectRoles.setPreferredSize(new Dimension(0, 25));
 				
-				GridBagConstraints gbc_comboBox = new GridBagConstraints();
-				gbc_comboBox.insets = new Insets(0, 0, 10, 0);
-				gbc_comboBox.fill = GridBagConstraints.BOTH;
-				gbc_comboBox.gridx = 1;
-				gbc_comboBox.gridy = 6;
-				panelRegistro.add(selectRoles, gbc_comboBox);      
+				GridBagConstraints gbc_selectRoles = new GridBagConstraints();
+				gbc_selectRoles.insets = new Insets(0, 0, 10, 0);
+				gbc_selectRoles.fill = GridBagConstraints.BOTH;
+				gbc_selectRoles.gridx = 1;
+				gbc_selectRoles.gridy = 6;
+				panelRegistro.add(selectRoles, gbc_selectRoles);      
 				
 				
 				
@@ -260,53 +262,139 @@ public class Registro extends JFrame {
 		//Panel del alumno
 				
 			//Panel
-			JPanel panelAlumno = new JPanel();		
-			String titlePanelAlumno = "Alumno";
-			TitledBorder borderPanelAlumno = BorderFactory.createTitledBorder(titlePanelAlumno);
-			panelAlumno.setBorder(borderPanelAlumno);
-			GridBagConstraints gbc_panelAlumno = new GridBagConstraints();
-			gbc_panelAlumno.insets = new Insets(0, 0, 5, 5);
-			gbc_panelAlumno.fill = GridBagConstraints.BOTH;
-			gbc_panelAlumno.gridx = 0;
-			gbc_panelAlumno.gridy = 1;
-			contentPane.add(panelAlumno, gbc_panelAlumno);
+			JPanel panelDatosUsuario = new JPanel();		
+			String titlePanelDatosUsuario = "Datos usuario";
+			TitledBorder borderPanelDatosUsuario = BorderFactory.createTitledBorder(titlePanelDatosUsuario);
+			panelDatosUsuario.setBorder(borderPanelDatosUsuario);
+			GridBagConstraints gbc_panelDatosUsuario = new GridBagConstraints();
+			gbc_panelDatosUsuario.insets = new Insets(0, 0, 5, 5);
+			gbc_panelDatosUsuario.fill = GridBagConstraints.BOTH;
+			gbc_panelDatosUsuario.gridx = 0;
+			gbc_panelDatosUsuario.gridy = 1;
+			contentPane.add(panelDatosUsuario, gbc_panelDatosUsuario);
+			
+			//panelAlumno.setVisible(false); //no quiero visualizar el panel del alumno
+			
 			
 			
 			//Layout
-			GridBagLayout gbl_panelAlumno = new GridBagLayout();			
-			gbl_panelAlumno.columnWeights = new double[]{0.0};
-			gbl_panelAlumno.rowHeights = new int[]{40, 40};			
-			gbl_panelAlumno.columnWeights = new double[]{Double.MIN_VALUE};
-			gbl_panelAlumno.rowWeights = new double[]{Double.MIN_VALUE};
-			panelAlumno.setLayout(gbl_panelAlumno);
+			GridBagLayout gbl_panelDatosUsuario = new GridBagLayout();			
+			gbl_panelDatosUsuario.columnWidths = new int[]{150,310};
+			gbl_panelDatosUsuario.rowHeights = new int[]{40, 40};				
+			panelDatosUsuario.setLayout(gbl_panelDatosUsuario);
 			
-			JLabel lblNewLabel = new JLabel("New label");
-			GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
-			gbc_lblNewLabel.insets = new Insets(0, 0, 5, 0);
-			gbc_lblNewLabel.gridx = 0;
-			gbc_lblNewLabel.gridy = 0;
-			panelAlumno.add(lblNewLabel, gbc_lblNewLabel);
 			
-			JLabel lblNewLabel_1 = new JLabel("New label");
-			GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
-			gbc_lblNewLabel_1.gridx = 0;
-			gbc_lblNewLabel_1.gridy = 1;
-			panelAlumno.add(lblNewLabel_1, gbc_lblNewLabel_1);
+			//Elementos
+				//Ciclo formativo
+				JLabel lblNewLabel = new JLabel("Ciclo formativo");
+				lblNewLabel.setFont(new Font("Open Sans", Font.PLAIN, 13));
+				GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
+				gbc_lblNewLabel.anchor = GridBagConstraints.WEST;
+				gbc_lblNewLabel.insets = new Insets(0, 0, 10, 10);
+				gbc_lblNewLabel.gridx = 0;
+				gbc_lblNewLabel.gridy = 0;
+				panelDatosUsuario.add(lblNewLabel, gbc_lblNewLabel);
+				
+				JComboBox selectCiclo = makeSelectAll(panelRegistro, new String[]{"ID", "Nombre"}, "Ciclos", "Selecciona un ciclo");				
+				selectCiclo.setPreferredSize(new Dimension(0, 25));
+				selectCiclo.setFont(new Font("Open Sans", Font.PLAIN, 13));
+				
+				GridBagConstraints gbc_selectCiclo = new GridBagConstraints();
+				gbc_selectCiclo.insets = new Insets(0, 0, 10, 0);
+				gbc_selectCiclo.fill = GridBagConstraints.HORIZONTAL;
+				gbc_selectCiclo.gridx = 1;
+				gbc_selectCiclo.gridy = 0;
+				panelDatosUsuario.add(selectCiclo, gbc_selectCiclo);
+				
+				
+				//Curso
+				JLabel labelCurso = new JLabel("Curso");
+				labelCurso.setFont(new Font("Open Sans", Font.PLAIN, 13));
+				GridBagConstraints gbc_labelCurso = new GridBagConstraints();
+				gbc_labelCurso.anchor = GridBagConstraints.WEST;
+				gbc_labelCurso.insets = new Insets(0, 0, 10, 10);
+				gbc_labelCurso.gridx = 0;
+				gbc_labelCurso.gridy = 1;
+				labelCurso.setVisible(false);
+				panelDatosUsuario.add(labelCurso, gbc_labelCurso);
+				
+				JComboBox selectCurso = makeSelectAll(panelRegistro, new String[]{"ID", "Nombre"}, "Cursos", "Selecciona un curso");
+				selectCurso.setPreferredSize(new Dimension(0, 25));
+				selectCurso.setFont(new Font("Open Sans", Font.PLAIN, 13));				
+				selectCurso.setVisible(false);
+				GridBagConstraints gbc_selectCurso = new GridBagConstraints();
+				gbc_selectCurso.fill = GridBagConstraints.HORIZONTAL;
+				gbc_selectCurso.insets = new Insets(0, 0, 10, 0);
+				gbc_selectCurso.gridx = 1;
+				gbc_selectCurso.gridy = 1;
+				panelDatosUsuario.add(selectCurso, gbc_selectCurso);
+				
+				
+				//Asignaturas
+				JLabel labelAsignaturas = new JLabel("Asignaturas");				
+				labelAsignaturas.setFont(new Font("Open Sans", Font.PLAIN, 13));
+				GridBagConstraints gbc_labelAsignaturas = new GridBagConstraints();
+				gbc_labelAsignaturas.anchor = GridBagConstraints.WEST;
+				gbc_labelAsignaturas.insets = new Insets(0, 0, 10, 10);
+				gbc_labelAsignaturas.gridx = 0;
+				gbc_labelAsignaturas.gridy = 1;
+				labelAsignaturas.setVisible(true);
+				panelDatosUsuario.add(labelAsignaturas, gbc_labelAsignaturas);
+				
+				JComboBox selectAsignaturas = makeSelectAll(panelRegistro, new String[]{"ID", "Nombre"}, "Asignaturas", "Selecciona una asignatura");
+				selectAsignaturas.setPreferredSize(new Dimension(0, 25));
+				selectAsignaturas.setFont(new Font("Open Sans", Font.PLAIN, 13));
+				selectAsignaturas.setToolTipText("Curso");
+				selectAsignaturas.setVisible(true);
+				GridBagConstraints gbc_selectAsignaturas = new GridBagConstraints();
+				gbc_selectAsignaturas.fill = GridBagConstraints.HORIZONTAL;
+				gbc_selectAsignaturas.insets = new Insets(0, 0, 10, 0);
+				gbc_selectAsignaturas.gridx = 1;
+				gbc_selectAsignaturas.gridy = 1;
+				panelDatosUsuario.add(selectAsignaturas, gbc_selectAsignaturas);
 		
 			
-		//Panel del profesor
-			
+		//Panel del alumno
+				
 			//Panel
-			/*JPanel panelProfesor = new JPanel();
-			String titlePanelProfesor= "Profesor";
-			TitledBorder borderPanelProfesor = BorderFactory.createTitledBorder(titlePanelProfesor);
-			panelProfesor.setBorder(borderPanelProfesor);
-			GridBagConstraints gbc_panelProfesor = new GridBagConstraints();
-			gbc_panelProfesor.insets = new Insets(0, 0, 5, 5);
-			gbc_panelProfesor.fill = GridBagConstraints.BOTH;
-			gbc_panelProfesor.gridx = 0;
-			gbc_panelProfesor.gridy = 2;
-			contentPane.add(panelProfesor, gbc_panelProfesor);*/
+			JPanel panelBotones = new JPanel();				
+			GridBagConstraints gbc_panelBotones = new GridBagConstraints();
+			gbc_panelBotones.insets = new Insets(0, 0, 5, 5);
+			gbc_panelBotones.fill = GridBagConstraints.BOTH;
+			gbc_panelBotones.gridx = 0;
+			gbc_panelBotones.gridy = 2;
+			contentPane.add(panelBotones, gbc_panelBotones);
+			
+			
+			//Layout
+			GridBagLayout gbl_panelBotones = new GridBagLayout();			
+			gbl_panelBotones.columnWidths = new int[]{230, 230};
+			gbl_panelBotones.rowHeights = new int[]{40};				
+			panelBotones.setLayout(gbl_panelBotones);
+			
+			
+			//Elementos
+			JButton btnLimpiar = new JButton("Limpiar");
+			btnLimpiar.setFont(new Font("Open Sans", Font.PLAIN, 13));
+			btnLimpiar.setPreferredSize(new Dimension(100, 34));	
+			btnLimpiar.setMargin(new Insets(10, 10, 10, 10)); // Padding del botón
+			GridBagConstraints gbc_btnLimpiar = new GridBagConstraints();
+			gbc_btnLimpiar.anchor = GridBagConstraints.EAST;
+			gbc_btnLimpiar.insets = new Insets(0, 0, 0, 5);
+			gbc_btnLimpiar.gridx = 0;
+			gbc_btnLimpiar.gridy = 0;
+			panelBotones.add(btnLimpiar, gbc_btnLimpiar);
+			
+			JButton btnGuardar = new JButton("Guardar");
+			btnGuardar.setFont(new Font("Open Sans", Font.PLAIN, 13));
+			btnGuardar.setPreferredSize(new Dimension(100, 34));	
+			btnGuardar.setMargin(new Insets(10, 10, 10, 10)); // Padding del botón
+			GridBagConstraints gbc_btnGuardar = new GridBagConstraints();
+			gbc_btnGuardar.anchor = GridBagConstraints.WEST;
+			gbc_btnGuardar.insets = new Insets(0, 0, 0, 5);
+			gbc_btnGuardar.gridx = 1;
+			gbc_btnGuardar.gridy = 0;
+			panelBotones.add(btnGuardar, gbc_btnGuardar);	
 	
 		
 	}
@@ -314,17 +402,14 @@ public class Registro extends JFrame {
 	
 	
 	//Base de datos
-		//Método que devuelve el combobox de los roles del usuario
-		protected JComboBox makeSelectRoles(JPanel panelRegistro) throws SQLException {		
-			
-			String[] campos = {"ID", "Nombre"};
-			String tabla = "Roles";
+		//Método que devuelve las opciones de los select
+		protected JComboBox makeSelectAll(JPanel panelRegistro, String[] campos, String tabla, String defaultOption) throws SQLException {		
 			
 			Map<Integer, String> valores = database.getValorSelect(campos, tabla); //valores del select
 			
 			//Creo el select
 			JComboBox comboBox = new JComboBox();
-			comboBox.addItem("Selecciona un rol");
+			comboBox.addItem(defaultOption);
 			
 			for(int i=1; i<=valores.size(); i++) {			
 				

@@ -34,9 +34,12 @@ public class Gestion {
 			st=(Statement) con.createStatement();
 			resultado= st.executeQuery(query);
 			
-			while (resultado.next()){				
+			while (resultado.next()){		
 				
-				aux.put(resultado.getInt("ID"), resultado.getString("Nombre"));
+				String valor = resultado.getString("Nombre");
+					   valor = (valor.length()>40) ? valor.substring(0, 40)+"..." : valor;
+				
+				aux.put(resultado.getInt("ID"), valor);
 							
 			}
 			
