@@ -1,5 +1,8 @@
 package Helpers;
 
+import javax.swing.ComboBoxModel;
+import javax.swing.JComboBox;
+
 public class Helpers {
 	
 	// Método para concatenar los elementos de un array con un delimitador
@@ -13,5 +16,8 @@ public class Helpers {
         }
         return resultado.toString();
     }
+    
+    
+   
 
 }
