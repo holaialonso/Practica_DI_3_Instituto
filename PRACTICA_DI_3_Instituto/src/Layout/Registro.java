@@ -277,7 +277,7 @@ public class Registro extends JFrame implements ActionListener, MouseListener{
 				panelRegistro.add(labelRol, gbc_labelRol);				
 				
 				//Select para los roles
-				selectRoles = makeSelectAll(new String[]{"ID", "Nombre"}, "Roles", "Selecciona un rol");	
+				selectRoles = makeSelect(new String[]{"ID", "Nombre"}, "Roles", "Selecciona un rol");	
 				selectRoles.setFont(new Font("Open Sans", Font.PLAIN, 13));
 				selectRoles.setPreferredSize(new Dimension(0, 25));		
 				selectRoles.addActionListener(this);
@@ -326,7 +326,7 @@ public class Registro extends JFrame implements ActionListener, MouseListener{
 				labelCiclo.setVisible(false);
 				panelDatosUsuario.add(labelCiclo, gbc_labelCiclo);
 				
-				selectCiclo = makeSelectAll(new String[]{"ID", "Nombre"}, "Ciclos", "Selecciona un ciclo");				
+				selectCiclo = makeSelect(new String[]{"ID", "Nombre"}, "Ciclos", "Selecciona un ciclo");				
 				selectCiclo.setPreferredSize(new Dimension(0, 25));
 				selectCiclo.setFont(new Font("Open Sans", Font.PLAIN, 13));				
 				GridBagConstraints gbc_selectCiclo = new GridBagConstraints();
@@ -349,7 +349,7 @@ public class Registro extends JFrame implements ActionListener, MouseListener{
 				labelCurso.setVisible(false);
 				panelDatosUsuario.add(labelCurso, gbc_labelCurso);
 				
-				selectCurso = makeSelectAll(new String[]{"ID", "Nombre"}, "Cursos", "Selecciona un curso");
+				selectCurso = makeSelect(new String[]{"ID", "Nombre"}, "Cursos", "Selecciona un curso");
 				selectCurso.setPreferredSize(new Dimension(0, 25));
 				selectCurso.setFont(new Font("Open Sans", Font.PLAIN, 13));				
 				selectCurso.setVisible(true);
@@ -373,7 +373,7 @@ public class Registro extends JFrame implements ActionListener, MouseListener{
 				panelDatosUsuario.add(labelAsignaturas, gbc_labelAsignaturas);
 								
 				
-				selectAsignaturas = makeSelectAll(new String[]{"ID", "Nombre"}, "Asignaturas", "Selecciona una asignatura");
+				selectAsignaturas = makeSelect(new String[]{"ID", "Nombre"}, "Asignaturas", "Selecciona una asignatura");
 				selectAsignaturas.setFont(new Font("Open Sans", Font.PLAIN, 13));
 				selectAsignaturas.setToolTipText("Curso");
 				selectAsignaturas.setPrototypeDisplayValue("Selecciona una asignatura"); //ajustar el ancho del comboBox al largo de la cadena
@@ -461,7 +461,7 @@ public class Registro extends JFrame implements ActionListener, MouseListener{
 	
 	//Base de datos
 		//Método que devuelve las opciones de los select
-		protected JComboBox makeSelectAll(String[] campos, String tabla, String defaultOption) throws SQLException {		
+		protected JComboBox makeSelect(String[] campos, String tabla, String defaultOption) throws SQLException {		
 			
 			Map<Integer, String> valores = database.getValorSelect(campos, tabla); //valores del select
 			

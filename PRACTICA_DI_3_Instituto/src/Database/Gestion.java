@@ -60,6 +60,58 @@ public class Gestion {
 		}
 
 		
+		//Método para obtener los valores de los diferentes selects relativos al profesor
+		public Map<Integer, String> getValoresSelect_Profesor(String tipoSelect, int idUsuario) throws SQLException{
+			
+			Map<Integer, String> aux = new HashMap<>();
+			con=conexion.getConexion();
+			String query="";
+			
+			//Query
+			switch(tipoSelect) {
+			
+				case "Asignaturas":
+					query="SELECT b.ID, b.Nombre FROM Profesores_Asignaturas a INNER JOIN Asignaturas b ON a.RefIdAsignatura=b.ID WHERE a.RefIdUsuario="+idUsuario;				
+				break;
+				
+				case "Ciclos":
+					query="SELECT distinct(c.ID) as ID, c.Nombre FROM Asignaturas_Ciclos a INNER JOIN Profesores_Asignaturas b ON a.RefIdAsignatura=b.RefIdAsignatura INNER JOIN Ciclos c ON a.RefIdCiclo=c.ID WHERE b.RefIdUsuario="+idUsuario+" GROUP BY c.Nombre";
+				break;
+					
+					
+				case "Cursos":
+					query="SELECT distinct(c.ID) as ID, c.Nombre FROM Profesores_Asignaturas a INNER JOIN Asignaturas b ON a.RefIdAsignatura=b.ID INNER JOIN Cursos c ON c.ID=b.RefIdCurso WHERE a.RefIdUsuario="+idUsuario+" GROUP BY c.Nombre";
+				break;
+			}
+			
+			System.out.println(query);
+			
+			//Resultado
+			try{
+				st=(Statement) con.createStatement();
+				resultado= st.executeQuery(query);
+				
+				while (resultado.next()){		
+					
+					String valor = resultado.getString("Nombre");					
+					
+					aux.put(resultado.getInt("ID"), valor);
+								
+				}
+				
+			}
+			catch (SQLException e) {
+				e.printStackTrace();
+			}
+					
+			
+			return aux;
+			
+		}
+		
+		
+		
+		
 	//Getters
 
 		//Método para comprobar si el usuario existe
