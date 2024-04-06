@@ -132,8 +132,7 @@ public class Gestion {
 				//Query
 				String query="INSERT INTO Usuarios(Email, Password, Nombre, Apellidos, RefIdRol) VALUES ('"+email.toLowerCase()+"', '"+pass.getPassword()+"', '"+nombre+"', '"+apellidos+"', "+getIdElemento("Roles", rol)+")";
 					
-				System.out.println(query);
-				
+							
 				//Resultado
 				try {
 					st=(Statement) con.createStatement();
@@ -153,7 +152,7 @@ public class Gestion {
 
 
 			//Método para insertar los datos correspondientes al alumno
-			public boolean insertDatosAlumno(String curso, String ciclo, String email) throws SQLException {
+			public boolean insertDatosAlumno(String ciclo, String curso, String email) throws SQLException {
 				
 				con=conexion.getConexion();
 				boolean aux = false;
@@ -161,7 +160,7 @@ public class Gestion {
 				
 				//Query
 				String query="INSERT INTO Alumnos_Matricula (RefIdUsuario, RefIdCurso, RefIdCiclo) VALUES ("+getIdUsuario(email)+", "+getIdElemento("Cursos", curso)+", "+getIdElemento("Ciclos", ciclo)+")";
-				
+								
 				//Resultado
 				try {
 					st=(Statement) con.createStatement();

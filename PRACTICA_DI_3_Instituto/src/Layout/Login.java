@@ -14,18 +14,24 @@ import javax.swing.border.LineBorder;
 
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.SQLException;
+
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 
-public class Login extends JFrame {
+public class Login extends JFrame implements ActionListener{
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField inputEmail;
 	private JPasswordField inputPassword;
+	
+	private JButton btnRegistro;
 
 	/**
 	 * Launch the application.
@@ -178,7 +184,8 @@ public class Login extends JFrame {
 			
 			//Elementos -> Botones
 			
-				JButton btnRegistro = new JButton("Registro");
+				btnRegistro = new JButton("Registro");
+				btnRegistro.addActionListener(this);
 				btnRegistro.setFont(new Font("Open Sans", Font.PLAIN, 13));
 				btnRegistro.setPreferredSize(new Dimension(100, 34));	
 				btnRegistro.setMargin(new Insets(10, 10, 10, 10)); // Padding del botón
@@ -190,5 +197,27 @@ public class Login extends JFrame {
 				
 				
 	}
+
+	
+	//EVENTOS
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			
+			//Botón registro -> que se abra la ventana del registro
+			if(e.getSource().equals(btnRegistro)) {	
+				
+				Registro registro = null;
+				
+				try {
+					registro = new Registro();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}		
+				
+				registro.setVisible(true);
+			}
+			
+		}
 
 }

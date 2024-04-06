@@ -26,6 +26,7 @@ import javax.swing.ListModel;
 import javax.swing.SpinnerListModel;
 import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 
 import Database.Gestion;
 import Helpers.Email;
@@ -68,6 +69,7 @@ public class Registro extends JFrame implements ActionListener, MouseListener{
 	private JList listaAsignaturas;
 	
 	private JButton btnRegistro;
+	private JButton btnLimpiar;
 	
 	private Gestion database = new Gestion();
 
@@ -387,11 +389,12 @@ public class Registro extends JFrame implements ActionListener, MouseListener{
 				
 				
 				
-				//Asignaturas que hemos seleccionado de la lista
+				//Asignaturas que hemos seleccionado de la lista	            
 				listaAsignaturas = new JList<>(asignaturasLista);			
 				listaAsignaturas.addMouseListener(this);
 				listaAsignaturas.setBackground(new Color(238, 238, 238));
 				listaAsignaturas.setPrototypeCellValue("Selecciona una asignatura"); //ajusto el ancho de la lista al largo de la cadena
+				            
 				GridBagConstraints gbc_listaAsignaturas = new GridBagConstraints();
 				gbc_listaAsignaturas.fill = GridBagConstraints.BOTH;
 				gbc_listaAsignaturas.gridx = 1;
@@ -423,6 +426,20 @@ public class Registro extends JFrame implements ActionListener, MouseListener{
 			
 			
 			//Elementos			
+			
+			btnLimpiar = new JButton("Limpiar");
+			btnLimpiar.addActionListener(this);
+			btnLimpiar.setFont(new Font("Open Sans", Font.PLAIN, 13));
+			btnLimpiar.setPreferredSize(new Dimension(100, 34));	
+			btnLimpiar.setMargin(new Insets(10, 10, 10, 10)); // Padding del botón
+			GridBagConstraints gbc_btnLimpiar = new GridBagConstraints();
+			gbc_btnLimpiar.anchor = GridBagConstraints.EAST;
+			gbc_btnLimpiar.insets = new Insets(0, 0, 0, 5);
+			gbc_btnLimpiar.gridx = 0;
+			gbc_btnLimpiar.gridy = 0;
+			panelBotones.add(btnLimpiar, gbc_btnLimpiar);	
+			
+			
 			btnRegistro = new JButton("Registrar");
 			btnRegistro.addActionListener(this);
 			btnRegistro.setFont(new Font("Open Sans", Font.PLAIN, 13));
@@ -434,6 +451,8 @@ public class Registro extends JFrame implements ActionListener, MouseListener{
 			gbc_btnGuardar.gridx = 1;
 			gbc_btnGuardar.gridy = 0;
 			panelBotones.add(btnRegistro, gbc_btnGuardar);	
+			
+			
 	
 		
 	}
@@ -531,13 +550,23 @@ public class Registro extends JFrame implements ActionListener, MouseListener{
 					String valor = (String) selectAsignaturas.getSelectedItem();
 					
 					//Añadir el valor al JList de asignaturas
-					if((valor != null)&&(!valor.isEmpty())&&(checkListValor(valor))) {
-	                    // Agregar el nuevo elemento al modelo de la lista
-						asignaturasLista.addElement(valor);
-	                }			
-				
+					if(asignaturasLista.getSize()<3) {
+						if((valor != null)&&(!valor.isEmpty())&&(checkListValor(valor))) {
+		                    // Agregar el nuevo elemento al modelo de la lista
+							asignaturasLista.addElement(valor);
+		                }
+					}
+					else {
+						showMensaje("El profesor solamente puede tener asignadas 3 asignaturas.");
+					}					
+					
 				}
 				
+				//Botón para limpiar el formulario
+				if(e.getSource().equals(btnLimpiar)) {
+					
+					clearFormulario();
+				}
 				
 				//Botón registro -> guarda el usuario
 				if(e.getSource().equals(btnRegistro)) {	
@@ -560,7 +589,7 @@ public class Registro extends JFrame implements ActionListener, MouseListener{
 										if((usuario)&&(alumno)) {
 											
 											showMensaje("El alumno ha sido creado correctamente.");
-											clearFormulario();
+											dispose(); //cierro la ventana
 																						
 										}
 									}
@@ -577,8 +606,8 @@ public class Registro extends JFrame implements ActionListener, MouseListener{
 										
 										if((usuario)&&(profesor)) {
 											
-											showMensaje("El profesor ha sido creado correctamente.");
-											clearFormulario();
+											showMensaje("El profesor ha sido creado correctamente.");											
+											dispose(); //cierro la ventana
 										}
 									}
 								break;
@@ -620,7 +649,7 @@ public class Registro extends JFrame implements ActionListener, MouseListener{
 				
 				//Saco en pantalla un mensaje de confirmación
 				int accion = JOptionPane.showConfirmDialog(null, "¿Quieres eliminar la asignatura "+valor+"?", "Confirma la acción", JOptionPane.OK_CANCEL_OPTION);
-				System.out.println("Accion->"+accion);
+				
 				
 				//Si el usuario confirma que lo que quiere hacer es borrar la asignatura -> procedo al borrado
 				if (accion == JOptionPane.OK_OPTION) {
@@ -736,7 +765,6 @@ public class Registro extends JFrame implements ActionListener, MouseListener{
 			boolean aux = true;
 			String password1=String.valueOf(inputPassword.getPassword());
 			String password2=String.valueOf(inputRepeatPassword.getPassword());
-			System.out.println(password1+"//"+password2);
 			
 			//Las contraseñas no pueden estar vacías
 			if((password1.isEmpty())||(password2.isEmpty())) {
@@ -761,10 +789,7 @@ public class Registro extends JFrame implements ActionListener, MouseListener{
 		//Método para validar los campos que son necesarios para registrar al alumno
 		protected boolean checkAlumno() {
 			
-			boolean aux = true;
-			
-			System.out.println(selectCiclo.getSelectedIndex());
-			System.out.println(selectCurso.getSelectedIndex());
+			boolean aux = true;		
 			
 			//Ciclo
 			if(selectCiclo.getSelectedIndex()==0) {
@@ -841,8 +866,9 @@ public class Registro extends JFrame implements ActionListener, MouseListener{
 			selectCiclo.setSelectedIndex(0);
 			selectCurso.setSelectedIndex(0);
 			
-			selectAsignaturas.setSelectedIndex(0);
 			asignaturasLista.clear();
+			selectAsignaturas.setSelectedIndex(0);
+			
             
 			
 		}
