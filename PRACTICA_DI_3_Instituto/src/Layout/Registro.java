@@ -19,6 +19,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Map;
 
 import javax.swing.JTextField;
@@ -463,13 +464,13 @@ public class Registro extends JFrame implements ActionListener, MouseListener{
 		//Método que devuelve las opciones de los select
 		protected JComboBox makeSelect(String[] campos, String tabla, String defaultOption) throws SQLException {		
 			
-			Map<Integer, String> valores = database.getValorSelect(campos, tabla); //valores del select
+			ArrayList<String> valores = database.getValorSelect(campos, tabla); //valores del select
 			
 			//Creo el select
 			JComboBox comboBox = new JComboBox();
 			comboBox.addItem(defaultOption);
 			
-			for(int i=1; i<=valores.size(); i++) {			
+			for (int i=0; i<valores.size(); i++) {			
 				
 				comboBox.addItem(valores.get(i));
 				
@@ -550,15 +551,17 @@ public class Registro extends JFrame implements ActionListener, MouseListener{
 					String valor = (String) selectAsignaturas.getSelectedItem();
 					
 					//Añadir el valor al JList de asignaturas
-					if(asignaturasLista.getSize()<3) {
-						if((valor != null)&&(!valor.isEmpty())&&(checkListValor(valor))) {
-		                    // Agregar el nuevo elemento al modelo de la lista
-							asignaturasLista.addElement(valor);
-		                }
+					if(selectAsignaturas.getSelectedIndex()>0) {
+						if(asignaturasLista.getSize()<3) {
+							if((valor != null)&&(!valor.isEmpty())&&(checkListValor(valor))) {
+			                    // Agregar el nuevo elemento al modelo de la lista
+								asignaturasLista.addElement(valor);
+			                }
+						}
+						else {
+							showMensaje("El profesor solamente puede tener asignadas 3 asignaturas.");
+						}	
 					}
-					else {
-						showMensaje("El profesor solamente puede tener asignadas 3 asignaturas.");
-					}					
 					
 				}
 				
@@ -619,20 +622,6 @@ public class Registro extends JFrame implements ActionListener, MouseListener{
 						e1.printStackTrace();
 					}
 					
-					
-					
-					/*try {
-						makeRegister();
-					} catch (SQLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (HeadlessException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (NoSuchAlgorithmException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}*/
 					
 				}
 		}
