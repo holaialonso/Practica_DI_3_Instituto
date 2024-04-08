@@ -15,6 +15,8 @@ import com.mysql.jdbc.Statement;
 import Helpers.Helpers;
 import Helpers.Password;
 import Model.Alumno;
+import Model.Asignatura;
+import Model.Profesor;
 
 public class Gestion {
 	private Conexion conexion=new Conexion();
@@ -146,8 +148,7 @@ public class Gestion {
 			return aux;
 		}
 		
-		
-		
+			
 		
 		
 		
@@ -212,12 +213,10 @@ public class Gestion {
 		public ArrayList<Alumno> getListadoAlumnos(String curso, String ciclo, String asignatura) throws SQLException{
 			
 			ArrayList <Alumno> aux = new ArrayList<>();
-			con = conexion.getConexion();
-			
-			//-> getIdElemento("Roles", rol)
-			
+			con = conexion.getConexion();			
+						
 			//Query
-			String query="SELECT c.ID, c.Nombre, c.Apellidos, d.Nota FROM Alumnos_Matricula a INNER JOIN Asignaturas_Ciclos b ON a.RefIdCiclo=b.RefIdCiclo INNER JOIN Usuarios c ON a.RefIdUsuario=c.ID LEFT JOIN Alumnos_Notas d ON c.ID=d.RefIdUsuario WHERE a.RefIdCurso="+getIdElemento("Cursos", curso)+" AND a.RefIdCiclo="+getIdElemento("Ciclos", ciclo)+" AND b.RefIdAsignatura="+getIdElemento("Asignaturas", asignatura);
+			String query="SELECT f.ID, f.Nombre, f.Apellidos, g.Nota FROM Asignaturas a INNER JOIN Cursos b ON a.RefIdCurso=b.ID INNER JOIN Asignaturas_Ciclos c ON a.ID=c.RefIdAsignatura INNER JOIN Ciclos d ON c.RefIdCiclo=d.ID INNER JOIN Alumnos_Matricula e ON e.RefIdCurso=b.ID AND e.RefIdCiclo=d.ID INNER JOIN Usuarios f ON e.RefIdUsuario=f.ID LEFT JOIN Alumnos_Notas g ON g.RefIdUsuario=f.ID AND g.RefIdAsignatura=a.ID WHERE b.ID="+getIdElemento("Cursos", curso)+" AND a.ID="+getIdElemento("Asignaturas", asignatura)+" AND d.ID="+getIdElemento("Ciclos", ciclo);
 			
 			//Resultado
 			try{
@@ -228,7 +227,7 @@ public class Gestion {
 					int id=resultado.getInt("ID");
 					String nombre=resultado.getString("Nombre");
 					String apellidos=resultado.getString("Apellidos");
-					float nota=resultado.getFloat("Nota");
+					double nota=resultado.getDouble("Nota");					
 					
 					aux.add(new Alumno(id, nombre, apellidos, nota));
 				}
@@ -242,7 +241,132 @@ public class Gestion {
 			return aux;
 		}
 	
+		//Login: Método para obtener el rol del usuario
+		public int getIdRol(int idUsuario) throws SQLException {
+			
+			int aux = 0;
+			con = conexion.getConexion();	
+			
+			String query="SELECT RefIdRol FROM Usuarios WHERE ID="+idUsuario;
+			
+			//Resultado
+			try{
+				st=(Statement) con.createStatement();
+				resultado= st.executeQuery(query);
+				while (resultado.next()){
+					
+					aux = resultado.getInt("RefIdRol");
+				}
+				
+			}
+			catch (SQLException e) {
+				e.printStackTrace();
+			}				
 		
+			return aux;
+		}
+		
+		
+		//Login: Método para crear el alumno
+		public Alumno getAlumno(int idUsuario) throws SQLException {
+			
+			con = conexion.getConexion();
+			Alumno aux = new Alumno();
+			
+			String query="SELECT a.ID, a.Nombre, a.Apellidos, c.Nombre as Curso, d.Nombre as Ciclo"
+						+ " FROM Usuarios a INNER JOIN Alumnos_Matricula b ON a.ID=b.RefIdUsuario"
+						+ " INNER JOIN Cursos c ON c.ID=b.RefIdCurso"
+						+ " INNER JOIN Ciclos d ON d.ID=b.RefIdCiclo"
+						+ " WHERE a.ID="+idUsuario;
+			
+			System.out.println(query);
+			
+			//Resultado
+			try{
+				st=(Statement) con.createStatement();
+				resultado= st.executeQuery(query);
+				while (resultado.next()){
+					
+					aux.setId(resultado.getInt("ID"));
+					aux.setNombre(resultado.getString("Nombre"));
+					aux.setApellidos(resultado.getString("Apellidos"));
+					aux.setCiclo(resultado.getString("Ciclo"));
+					aux.setCurso(resultado.getString("Curso"));
+				}
+				
+			}
+			catch (SQLException e) {
+				e.printStackTrace();
+			}				
+			
+			return aux;
+			
+		}
+
+		
+		//Login - Alumno: Método para obtener las notas de un alumno
+		public ArrayList<Asignatura> getNotasAlumno(int idUsuario, String ciclo, String curso) throws SQLException{
+			
+			ArrayList<Asignatura> aux = new ArrayList<>();
+			con = conexion.getConexion();
+			
+			String query="SELECT a.Nombre, e.Nota, e.RefIdUsuario"
+					+ " FROM Asignaturas a INNER JOIN Cursos b ON a.RefIdCurso=b.ID"
+					+ " INNER JOIN Asignaturas_Ciclos c ON c.RefIdAsignatura=a.ID"
+					+ " INNER JOIN Ciclos d ON c.RefIdCiclo=d.ID"
+					+ " LEFT JOIN Alumnos_Notas e ON e.RefIdAsignatura=a.ID AND e.RefIdCiclo=d.ID"
+					+ " WHERE c.RefIdCiclo="+getIdElemento("Ciclos", ciclo)+" AND a.RefIdCurso="+getIdElemento("Cursos", curso);
+			
+			//Resultado
+			try{
+				st=(Statement) con.createStatement();
+				resultado= st.executeQuery(query);
+				while (resultado.next()){
+					
+					if((resultado.getInt("RefIdUsuario")==idUsuario)||(resultado.getInt("RefIdUsuario")==0)) {
+						
+						aux.add(new Asignatura(resultado.getString("Nombre"), resultado.getDouble("Nota")));
+					}
+				}
+				
+			}
+			catch (SQLException e) {
+				e.printStackTrace();
+			}			
+			
+			return aux;
+			
+		}
+		
+		
+		//Login: Método para crear el profesor
+		public Profesor getProfesor(int idUsuario) throws SQLException {			
+				
+			con = conexion.getConexion();
+			Profesor aux = new Profesor();
+			
+			String query="SELECT ID, Nombre, Apellidos FROM Usuarios WHERE ID="+idUsuario;
+			
+			//Resultado
+			try{
+				st=(Statement) con.createStatement();
+				resultado= st.executeQuery(query);
+				while (resultado.next()){
+					
+					aux.setId(resultado.getInt("ID"));
+					aux.setNombre(resultado.getString("Nombre"));
+					aux.setApellidos(resultado.getString("Apellidos"));
+				}
+				
+			}
+			catch (SQLException e) {
+				e.printStackTrace();
+			}				
+			
+			return aux;
+				
+			
+		}
 		
 	//CONSULTAS
 		
@@ -340,51 +464,52 @@ public class Gestion {
 			}
 	
 	
-		//Profesor: Método para guardar las notas de los alumnos
-		public int saveNotaAlumno(int idAlumno, double nota, String ciclo, String asignatura) throws SQLException {
-			
-			int aux = 0;
-			
-			//Obengo los id's correspondientes para el ciclo y la asignatura
-			int idCiclo=getIdElemento("Ciclos", ciclo);
-			int idAsignatura=getIdElemento("Asignaturas", asignatura);
-						
-			//Compruebo si existe el registro en la tabla para el usuario y dependiendo de eso, hago un insert o un update
-			String query="";		
-			
-			if(issetNotaAlumno(idAlumno, idCiclo, idAsignatura)) {
+			//Profesor: Método para guardar las notas de los alumnos
+			public int saveNotaAlumno(int idAlumno, double nota, String ciclo, String asignatura) throws SQLException {
 				
-				query="UPDATE Alumnos_Notas SET Nota="+nota+" WHERE RefIdUsuario="+idAlumno+" AND RefIdAsignatura="+idAsignatura+" AND RefIdCiclo="+idCiclo;
+				int aux = 1;
 				
-			}
-			else {
+				//Obengo los id's correspondientes para el ciclo y la asignatura
+				int idCiclo=getIdElemento("Ciclos", ciclo);
+				int idAsignatura=getIdElemento("Asignaturas", asignatura);
+							
+				//Compruebo si existe el registro en la tabla para el usuario y dependiendo de eso, hago un insert o un update
+				String query="";		
 				
-				query="INSERT INTO Alumnos_Notas (RefIdUsuario, RefIdAsignatura, RefIdCiclo, Nota) VALUES ("+idAlumno+", "+idAsignatura+", "+idCiclo+", "+nota+")";
-				
-			}
-			
-			System.out.println(query);
-			
-			//Resultado
-			try{
-				st=(Statement) con.createStatement();				
-				int confirmar = st.executeUpdate(query);
-				if (confirmar == 1){
-					aux = 1;
+				if(issetNotaAlumno(idAlumno, idCiclo, idAsignatura)) {
+					
+					query="UPDATE Alumnos_Notas SET Nota="+nota+" WHERE RefIdUsuario="+idAlumno+" AND RefIdAsignatura="+idAsignatura+" AND RefIdCiclo="+idCiclo;
+					
+				}
+				else {
+					
+					if(nota>0) {
+					
+						query="INSERT INTO Alumnos_Notas (RefIdUsuario, RefIdAsignatura, RefIdCiclo, Nota) VALUES ("+idAlumno+", "+idAsignatura+", "+idCiclo+", "+nota+")";
+					
+					}
 				}
 				
-			}
-			catch (SQLException e) {
-				e.printStackTrace();
+							
+				//Resultado
+				if(query.length()>0) {
+					try{
+						st=(Statement) con.createStatement();				
+						int confirmar = st.executeUpdate(query);				
+					}
+					catch (SQLException e) {
+						e.printStackTrace();
+						aux=0;
+					}
+				}
+				
+				
+				return aux;
 			}
 			
 			
-			return aux;
-		}
-		
-		
-		//Método para comprobar si existe la nota del alumno en la tabla Alumnos_Notas
-		public boolean issetNotaAlumno(int idAlumno, int idCiclo, int idAsignatura) throws SQLException {
+				//Método para comprobar si existe la nota del alumno en la tabla Alumnos_Notas
+				public boolean issetNotaAlumno(int idAlumno, int idCiclo, int idAsignatura) throws SQLException {
 			
 			boolean aux = false;
 			con = conexion.getConexion();
@@ -410,5 +535,34 @@ public class Gestion {
 			
 			
 		}
-	
+
+				
+	//LOGIN
+				
+		//Método para loguear un usuario
+		public int makeLogin(String email, String password) throws SQLException, NoSuchAlgorithmException {
+			
+			int aux = 0;
+			con=conexion.getConexion();
+			
+			password = new Password(password).getPassword(); //codificación en md5			
+			
+			String query="SELECT ID FROM Usuarios WHERE Email='"+email+"' AND Password='"+password+"'";
+			
+			//Resultado
+			try{
+				st=(Statement) con.createStatement();
+				resultado= st.executeQuery(query);
+				while (resultado.next()){
+					
+					aux = resultado.getInt("ID");
+				}
+				
+			}
+			catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+			return aux;
+		}
 }

@@ -12,13 +12,20 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
+import Database.Gestion;
+import Helpers.Email;
+import Model.Alumno;
+import Model.Profesor;
+
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.BorderFactory;
@@ -32,6 +39,9 @@ public class Login extends JFrame implements ActionListener{
 	private JPasswordField inputPassword;
 	
 	private JButton btnRegistro;
+	private JButton btnLogin;
+	
+	private Gestion database = new Gestion();
 
 	/**
 	 * Launch the application.
@@ -132,7 +142,7 @@ public class Login extends JFrame implements ActionListener{
 					labelPassword.setFont(new Font("Open Sans", Font.PLAIN, 13));
 					GridBagConstraints gbc_labelPassword = new GridBagConstraints();
 					gbc_labelPassword.anchor = GridBagConstraints.EAST;
-					gbc_labelPassword.insets = new Insets(0, 0, 0, 10);
+					gbc_labelPassword.insets = new Insets(0, 0, 20, 10);
 					gbc_labelPassword.gridx = 0;
 					gbc_labelPassword.gridy = 2;
 					panelIzquierda.add(labelPassword, gbc_labelPassword);
@@ -144,7 +154,7 @@ public class Login extends JFrame implements ActionListener{
 					inputPassword.setBorder(new LineBorder(Color.decode("#90A4AE"), 1, true));
 					inputPassword.setPreferredSize(new Dimension(150, 25));
 					GridBagConstraints gbc_inputPassword = new GridBagConstraints();
-					gbc_inputPassword.insets = new Insets(0, 0, 10, 20);
+					gbc_inputPassword.insets = new Insets(0, 0, 20, 20);
 					gbc_inputPassword.fill = GridBagConstraints.BOTH;
 					gbc_inputPassword.gridx = 1;
 					gbc_inputPassword.gridy = 2;
@@ -152,7 +162,8 @@ public class Login extends JFrame implements ActionListener{
 					
 					
 					//Btn Login
-					JButton btnLogin = new JButton("Login");
+					btnLogin = new JButton("Login");
+					btnLogin.addActionListener(this);
 					btnLogin.setFont(new Font("Open Sans", Font.PLAIN, 13));
 					btnLogin.setPreferredSize(new Dimension(100, 34));	
 					btnLogin.setMargin(new Insets(10, 10, 10, 10)); // Padding del botón
@@ -218,6 +229,75 @@ public class Login extends JFrame implements ActionListener{
 				registro.setVisible(true);
 			}
 			
+			
+			//Botón del login -> el usuario se loguea y se abre la ventana correspondiente al profesor y al alumno
+			if(e.getSource().equals(btnLogin)) {
+				
+				if((inputEmail.getText().length()>0)&&(String.valueOf(inputPassword.getPassword()).length()>0)) { //los campos no deben estar vacíos
+					
+					if(new Email(inputEmail.getText()).getIsEmail()) { //el email debe cumplir el patrón correspondiente
+						
+						try {
+							
+							if(database.getIdUsuario(inputEmail.getText())>0) { //el usuario se loguea
+								
+								int idUsuario=database.makeLogin(inputEmail.getText(), String.valueOf(inputPassword.getPassword()));
+								
+								//Compruebo el rol que tiene el usuario y abro una ventana u otra
+								switch(database.getIdRol(idUsuario)) {
+									
+									case 1: //alumno
+											
+										//Creo el alumno
+										Alumno alumno = database.getAlumno(idUsuario);
+										       alumno.setNotas(database.getNotasAlumno(idUsuario, alumno.getCiclo(), alumno.getCurso()));
+										       
+										//Abro la ventana correspondiente
+										NotasAlumno NotasAlumno = new NotasAlumno(alumno);
+										
+									break;
+									
+									case 2: //profesor
+										
+										Profesor profesor = database.getProfesor(idUsuario);
+										
+									break;
+								
+								}
+							}
+							else {
+								
+								showMensaje("El usuario introducido no está registrado.");
+							}
+						} catch (SQLException | NoSuchAlgorithmException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						
+					}
+					else {
+						showMensaje("El email debe cumplir el patrón: usuario@dominio.com");
+					}
+					
+				}
+				else {
+					showMensaje("Error: el email y la contraseña no pueden estar vacíos.");
+				}
+				
+			}
+			
 		}
+		
+		
+		
+	//AVISOS
+	
+			//Método para imprimir en pantalla los avisos
+			protected void showMensaje(String mensaje) {
+				
+				JOptionPane.showConfirmDialog(null, mensaje,
+		                "Message", JOptionPane.CLOSED_OPTION,
+		                JOptionPane.INFORMATION_MESSAGE);
+			}
 
 }

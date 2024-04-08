@@ -51,6 +51,7 @@ public class Helpers {
 	}
    
     
+    
     // Método para obtener todos los componentes de un tipo específico en un GridBagLayout
     public static <T extends Component> ArrayList<T> getAllComponentsOfType(JPanel panel, Class<T> type) {
         ArrayList<T> componentsOfType = new ArrayList<>();
