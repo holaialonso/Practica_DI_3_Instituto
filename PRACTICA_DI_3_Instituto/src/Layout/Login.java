@@ -116,7 +116,7 @@ public class Login extends JFrame implements ActionListener{
 					labelEmail.setFont(new Font("Open Sans", Font.PLAIN, 13));
 					GridBagConstraints gbc_labelEmail = new GridBagConstraints();
 					gbc_labelEmail.anchor = GridBagConstraints.EAST;
-					gbc_labelEmail.insets = new Insets(0, 0, 0, 10);
+					gbc_labelEmail.insets = new Insets(0, 0, 20, 20);
 					gbc_labelEmail.gridx = 0;
 					gbc_labelEmail.gridy = 1;
 					panelIzquierda.add(labelEmail, gbc_labelEmail);
@@ -129,7 +129,7 @@ public class Login extends JFrame implements ActionListener{
 					inputEmail.setBorder(new LineBorder(Color.decode("#90A4AE"), 1, true));
 					inputEmail.setPreferredSize(new Dimension(150, 25));
 					GridBagConstraints gbc_inputEmail = new GridBagConstraints();
-					gbc_inputEmail.insets = new Insets(0, 0, 10, 20);
+					gbc_inputEmail.insets = new Insets(0, 0, 20, 20);
 					gbc_inputEmail.fill = GridBagConstraints.BOTH;
 					gbc_inputEmail.gridx = 1;
 					gbc_inputEmail.gridy = 1;
@@ -142,7 +142,7 @@ public class Login extends JFrame implements ActionListener{
 					labelPassword.setFont(new Font("Open Sans", Font.PLAIN, 13));
 					GridBagConstraints gbc_labelPassword = new GridBagConstraints();
 					gbc_labelPassword.anchor = GridBagConstraints.EAST;
-					gbc_labelPassword.insets = new Insets(0, 0, 20, 10);
+					gbc_labelPassword.insets = new Insets(0, 0, 20, 20);
 					gbc_labelPassword.gridx = 0;
 					gbc_labelPassword.gridy = 2;
 					panelIzquierda.add(labelPassword, gbc_labelPassword);
@@ -233,46 +233,54 @@ public class Login extends JFrame implements ActionListener{
 			//Botón del login -> el usuario se loguea y se abre la ventana correspondiente al profesor y al alumno
 			if(e.getSource().equals(btnLogin)) {
 				
-				if((inputEmail.getText().length()>0)&&(String.valueOf(inputPassword.getPassword()).length()>0)) { //los campos no deben estar vacíos
+				String email=inputEmail.getText().toLowerCase();
+				
+				if((email.length()>0)&&(String.valueOf(inputPassword.getPassword()).length()>0)) { //los campos no deben estar vacíos
 					
-					if(new Email(inputEmail.getText()).getIsEmail()) { //el email debe cumplir el patrón correspondiente
+					if(new Email(email).getIsEmail()) { //el email debe cumplir el patrón correspondiente
 						
 						try {
 							
-							if(database.getIdUsuario(inputEmail.getText())>0) { //el usuario se loguea
+							if(database.getIdUsuario(email)>0) { //el usuario se loguea
 								
-								int idUsuario=database.makeLogin(inputEmail.getText(), String.valueOf(inputPassword.getPassword()));
+								int idUsuario=database.makeLogin(email, String.valueOf(inputPassword.getPassword()));
 								
-								//Compruebo el rol que tiene el usuario y abro una ventana u otra
-								switch(database.getIdRol(idUsuario)) {
-									
-									case 1: //alumno
+								if(idUsuario>0) {
+								
+									//Compruebo el rol que tiene el usuario y abro una ventana u otra
+									switch(database.getIdRol(idUsuario)) {
+										
+										case 1: //alumno
+												
+											//Creo el alumno y seteo las notas
+											Alumno alumno = database.getAlumno(idUsuario);
+											       alumno.setNotas(database.getNotasAlumno(idUsuario, alumno.getCiclo(), alumno.getCurso()));
+											       
+											//Abro la ventana correspondiente
+											NotasAlumno notasAlumno = new NotasAlumno(alumno);
 											
-										//Creo el alumno y seteo las notas
-										Alumno alumno = database.getAlumno(idUsuario);
-										       alumno.setNotas(database.getNotasAlumno(idUsuario, alumno.getCiclo(), alumno.getCurso()));
-										       
-										//Abro la ventana correspondiente
-										NotasAlumno notasAlumno = new NotasAlumno(alumno);
+											//Cierro la actual
+											dispose();
+											
+										break;
 										
-										//Cierro la actual
-										dispose();
-										
-									break;
+										case 2: //profesor
+											
+											//Creo el profesor 
+											Profesor profesor = database.getProfesor(idUsuario);
+													 
+											//Abro la ventana correspondiente
+											NotasProfesor notasProfesor = new NotasProfesor(profesor);
+											
+											//Cierro la actual
+											dispose();
+											
+										break;
 									
-									case 2: //profesor
-										
-										//Creo el profesor 
-										Profesor profesor = database.getProfesor(idUsuario);
-												 
-										//Abro la ventana correspondiente
-										NotasProfesor notasProfesor = new NotasProfesor(profesor);
-										
-										//Cierro la actual
-										dispose();
-										
-									break;
-								
+									}
+								}
+								else {
+									showMensaje("El usuario o la contraseña son incorrectos.");
 								}
 							}
 							else {
