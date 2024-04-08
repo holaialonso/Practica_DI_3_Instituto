@@ -255,6 +255,9 @@ public class Login extends JFrame implements ActionListener{
 										//Abro la ventana correspondiente
 										NotasAlumno notasAlumno = new NotasAlumno(alumno);
 										
+										//Cierro la actual
+										dispose();
+										
 									break;
 									
 									case 2: //profesor
@@ -265,6 +268,8 @@ public class Login extends JFrame implements ActionListener{
 										//Abro la ventana correspondiente
 										NotasProfesor notasProfesor = new NotasProfesor(profesor);
 										
+										//Cierro la actual
+										dispose();
 										
 									break;
 								
