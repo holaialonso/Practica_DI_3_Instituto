@@ -26,8 +26,7 @@ public class Gestion {
 	
 	
 	//Procesos
-	//SELECT
-	
+
 		//Método para obtener los valores de los roles creados en la bbdd
 		public ArrayList<String> getValorSelect(String[] campos, String tabla) throws SQLException {
 			
@@ -208,9 +207,8 @@ public class Gestion {
 			return id;
 			
 		}
-		
-		
-		//Método para obtener un listado de alumnos en base a unos filtros establecidos
+
+		//Profesor: Método para obtener un listado de alumnos en base a unos filtros establecidos
 		public ArrayList<Alumno> getListadoAlumnos(String curso, String ciclo, String asignatura) throws SQLException{
 			
 			ArrayList <Alumno> aux = new ArrayList<>();
@@ -342,6 +340,75 @@ public class Gestion {
 			}
 	
 	
-	
+		//Profesor: Método para guardar las notas de los alumnos
+		public int saveNotaAlumno(int idAlumno, double nota, String ciclo, String asignatura) throws SQLException {
+			
+			int aux = 0;
+			
+			//Obengo los id's correspondientes para el ciclo y la asignatura
+			int idCiclo=getIdElemento("Ciclos", ciclo);
+			int idAsignatura=getIdElemento("Asignaturas", asignatura);
+						
+			//Compruebo si existe el registro en la tabla para el usuario y dependiendo de eso, hago un insert o un update
+			String query="";		
+			
+			if(issetNotaAlumno(idAlumno, idCiclo, idAsignatura)) {
+				
+				query="UPDATE Alumnos_Notas SET Nota="+nota+" WHERE RefIdUsuario="+idAlumno+" AND RefIdAsignatura="+idAsignatura+" AND RefIdCiclo="+idCiclo;
+				
+			}
+			else {
+				
+				query="INSERT INTO Alumnos_Notas (RefIdUsuario, RefIdAsignatura, RefIdCiclo, Nota) VALUES ("+idAlumno+", "+idAsignatura+", "+idCiclo+", "+nota+")";
+				
+			}
+			
+			System.out.println(query);
+			
+			//Resultado
+			try{
+				st=(Statement) con.createStatement();				
+				int confirmar = st.executeUpdate(query);
+				if (confirmar == 1){
+					aux = 1;
+				}
+				
+			}
+			catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+			
+			return aux;
+		}
+		
+		
+		//Método para comprobar si existe la nota del alumno en la tabla Alumnos_Notas
+		public boolean issetNotaAlumno(int idAlumno, int idCiclo, int idAsignatura) throws SQLException {
+			
+			boolean aux = false;
+			con = conexion.getConexion();
+			
+			//Query
+			String query="SELECT * FROM Alumnos_Notas WHERE RefIdUsuario="+idAlumno+" AND RefIdAsignatura="+idAsignatura+" AND RefIdCiclo="+idCiclo;
+			
+			//Resultado
+			try{
+				st=(Statement) con.createStatement();
+				resultado= st.executeQuery(query);
+				while (resultado.next()){
+					
+					aux = true;
+				}
+				
+			}
+			catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+			return aux;
+			
+			
+		}
 	
 }
