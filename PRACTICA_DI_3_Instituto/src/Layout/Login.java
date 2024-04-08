@@ -248,18 +248,23 @@ public class Login extends JFrame implements ActionListener{
 									
 									case 1: //alumno
 											
-										//Creo el alumno
+										//Creo el alumno y seteo las notas
 										Alumno alumno = database.getAlumno(idUsuario);
 										       alumno.setNotas(database.getNotasAlumno(idUsuario, alumno.getCiclo(), alumno.getCurso()));
 										       
 										//Abro la ventana correspondiente
-										NotasAlumno NotasAlumno = new NotasAlumno(alumno);
+										NotasAlumno notasAlumno = new NotasAlumno(alumno);
 										
 									break;
 									
 									case 2: //profesor
 										
+										//Creo el profesor 
 										Profesor profesor = database.getProfesor(idUsuario);
+												 
+										//Abro la ventana correspondiente
+										NotasProfesor notasProfesor = new NotasProfesor(profesor);
+										
 										
 									break;
 								

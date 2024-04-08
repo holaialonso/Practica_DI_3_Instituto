@@ -216,7 +216,14 @@ public class Gestion {
 			con = conexion.getConexion();			
 						
 			//Query
-			String query="SELECT f.ID, f.Nombre, f.Apellidos, g.Nota FROM Asignaturas a INNER JOIN Cursos b ON a.RefIdCurso=b.ID INNER JOIN Asignaturas_Ciclos c ON a.ID=c.RefIdAsignatura INNER JOIN Ciclos d ON c.RefIdCiclo=d.ID INNER JOIN Alumnos_Matricula e ON e.RefIdCurso=b.ID AND e.RefIdCiclo=d.ID INNER JOIN Usuarios f ON e.RefIdUsuario=f.ID LEFT JOIN Alumnos_Notas g ON g.RefIdUsuario=f.ID AND g.RefIdAsignatura=a.ID WHERE b.ID="+getIdElemento("Cursos", curso)+" AND a.ID="+getIdElemento("Asignaturas", asignatura)+" AND d.ID="+getIdElemento("Ciclos", ciclo);
+			String query="SELECT f.ID, f.Nombre, f.Apellidos, g.Nota, a.Nombre as Asignatura "
+						+ " FROM Asignaturas a INNER JOIN Cursos b ON a.RefIdCurso=b.ID "
+						+ " INNER JOIN Asignaturas_Ciclos c ON a.ID=c.RefIdAsignatura "
+						+ " INNER JOIN Ciclos d ON c.RefIdCiclo=d.ID "
+						+ " INNER JOIN Alumnos_Matricula e ON e.RefIdCurso=b.ID AND e.RefIdCiclo=d.ID "
+						+ " INNER JOIN Usuarios f ON e.RefIdUsuario=f.ID "
+						+ " LEFT JOIN Alumnos_Notas g ON g.RefIdUsuario=f.ID AND g.RefIdAsignatura=a.ID "
+						+ " WHERE b.ID="+getIdElemento("Cursos", curso)+" AND a.ID="+getIdElemento("Asignaturas", asignatura)+" AND d.ID="+getIdElemento("Ciclos", ciclo);
 			
 			//Resultado
 			try{
@@ -227,9 +234,11 @@ public class Gestion {
 					int id=resultado.getInt("ID");
 					String nombre=resultado.getString("Nombre");
 					String apellidos=resultado.getString("Apellidos");
-					double nota=resultado.getDouble("Nota");					
 					
-					aux.add(new Alumno(id, nombre, apellidos, nota));
+					ArrayList <Asignatura> notas = new ArrayList<>();
+									       notas.add(new Asignatura(resultado.getString("Asignatura"), resultado.getDouble("Nota")));
+									       
+					aux.add(new Alumno(id, nombre, apellidos, notas));
 				}
 				
 			}
