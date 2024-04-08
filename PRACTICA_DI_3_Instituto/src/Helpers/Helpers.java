@@ -33,15 +33,11 @@ public class Helpers {
 	    // Obtener la información de restricciones del componente en la posición especificada
 	    Component[] components = panel.getComponents();
 	    for (Component component : components) {
-	        GridBagConstraints gbc = layout.getConstraints(component);
+	        GridBagConstraints gbc = layout.getConstraints(component);	       
 	        
-	        System.out.println(gbc.gridx+"//"+gbc.gridy);
-	        
-	        if ((gbc.gridx!=column)||(gbc.gridy != row)) {
-	        	
-	        	System.out.println(component);	        	
-	            panel.remove(component); // Eliminar el componente
-	           
+	        if ((gbc.gridx!=column)||(gbc.gridy != row)) {        	
+	        	   	
+	            panel.remove(component); // Eliminar el componente           
 	           
 	        }
 	    }

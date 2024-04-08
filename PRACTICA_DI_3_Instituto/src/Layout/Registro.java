@@ -134,7 +134,7 @@ public class Registro extends JFrame implements ActionListener, MouseListener{
 			//Elementos
 				//Título
 				JLabel labelTitle = new JLabel("REGISTRO");
-				labelTitle.setFont(new Font("Open Sans", Font.BOLD, 13));
+				labelTitle.setFont(new Font("Helvetica Neue", Font.BOLD, 13));
 				GridBagConstraints gbc_labelTitle = new GridBagConstraints();
 				gbc_labelTitle.insets = new Insets(0, 0, 10, 0);
 				gbc_labelTitle.gridx = 0;
