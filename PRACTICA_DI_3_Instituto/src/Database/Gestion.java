@@ -319,6 +319,33 @@ public class Gestion {
 			return aux;
 			
 		}
+		
+		//Login - Alumno: Método para obtener la nota
+		public double getNotaAsignaturaAlumno(int idUsuario, int idAsignatura) throws SQLException {
+			
+			double aux=0.0;
+			con = conexion.getConexion();
+			
+			String query="SELECT Nota"
+					+ " FROM Alumnos_Notas"
+					+ " WHERE RefIdUsuario="+idUsuario+" AND RefIdAsignatura="+idAsignatura;
+			
+			//Resultado
+			try{
+				st=(Statement) con.createStatement();
+				resultado= st.executeQuery(query);				
+				while (resultado.next()){
+					
+					aux = resultado.getDouble("Nota");
+				}
+				
+			}
+			catch (SQLException e) {
+				e.printStackTrace();
+			}			
+			
+			return aux;
+		}
 
 		
 		//Login - Alumno: Método para obtener las notas de un alumno
@@ -327,29 +354,38 @@ public class Gestion {
 			ArrayList<Asignatura> aux = new ArrayList<>();
 			con = conexion.getConexion();
 			
-			String query="SELECT a.Nombre, e.Nota, e.RefIdUsuario"
+			String query="SELECT a.ID, a.Nombre"
 					+ " FROM Asignaturas a INNER JOIN Cursos b ON a.RefIdCurso=b.ID"
 					+ " INNER JOIN Asignaturas_Ciclos c ON c.RefIdAsignatura=a.ID"
-					+ " INNER JOIN Ciclos d ON c.RefIdCiclo=d.ID"
-					+ " LEFT JOIN Alumnos_Notas e ON e.RefIdAsignatura=a.ID AND e.RefIdCiclo=d.ID"
+					+ " INNER JOIN Ciclos d ON c.RefIdCiclo=d.ID"					
 					+ " WHERE c.RefIdCiclo="+getIdElemento("Ciclos", ciclo)+" AND a.RefIdCurso="+getIdElemento("Cursos", curso);
 			
+						
 			//Resultado
 			try{
 				st=(Statement) con.createStatement();
 				resultado= st.executeQuery(query);
-				while (resultado.next()){
+				while (resultado.next()){		
 					
-					if((resultado.getInt("RefIdUsuario")==idUsuario)||(resultado.getInt("RefIdUsuario")==0)) {
-						
-						aux.add(new Asignatura(resultado.getString("Nombre"), resultado.getDouble("Nota")));
-					}
+					String nombre=resultado.getString("Nombre");					
+					int id=resultado.getInt("ID");
+					
+					aux.add(new Asignatura(id, nombre));
+					
 				}
 				
 			}
 			catch (SQLException e) {
+				System.out.println("dentro");
 				e.printStackTrace();
 			}			
+			
+			
+			//Recorro las asignaturas y consulto la nota del usuario
+			for(int i=0; i<aux.size(); i++) {				
+				
+				aux.get(i).setNota(getNotaAsignaturaAlumno(idUsuario, aux.get(i).getId()));
+			}
 			
 			return aux;
 			
