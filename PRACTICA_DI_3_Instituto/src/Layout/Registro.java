@@ -74,26 +74,7 @@ public class Registro extends JFrame implements ActionListener, MouseListener{
 	
 	private Gestion database = new Gestion();
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Registro frame = new Registro();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
-	 * Create the frame.
-	 * @throws SQLException 
-	 */
+	
 	public Registro() throws SQLException {
 		//Configuración de la ventana
 		setVisible(true);
